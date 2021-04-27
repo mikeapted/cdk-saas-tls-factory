@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
-import * as api from './api';
-import * as state from './state';
-import * as stateMachine from './stateMachine';
+import { CdkSaasTlsFactoryApi } from './api';
+import { CdkSaasTlsFactoryState } from './state';
+import { CdkSaasTlsFactoryStateMachinePostDomain } from './stateMachinePostDomain';
 
 export interface CdkSaasTlsFactoryProps {
   // Define construct properties here
@@ -12,13 +12,13 @@ export class CdkSaasTlsFactory extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: CdkSaasTlsFactoryProps = {}) {
     super(scope, id);
 
-    const saasState = new state.CdkSaasTlsFactoryState(this, 'State');
-    const saasStateMachine = new stateMachine.CdkSaasTlsFactoryStateMachine(this, 'StateMachine', {
+    const saasState = new CdkSaasTlsFactoryState(this, 'State');
+    const saasStateMachinePostDomain = new CdkSaasTlsFactoryStateMachinePostDomain(this, 'StateMachine', {
       domainTable: saasState.domainTable
     });
-    const saasApi = new api.CdkSaasTlsFactoryApi(this, 'Api', {
+    const saasApi = new CdkSaasTlsFactoryApi(this, 'Api', {
       domainTable: saasState.domainTable,
-      postDomain: saasStateMachine.postDomain
+      postDomain: saasStateMachinePostDomain.postDomain
     });
   }
 }

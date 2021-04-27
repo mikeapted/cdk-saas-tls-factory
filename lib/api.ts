@@ -81,5 +81,28 @@ export class CdkSaasTlsFactoryApi extends cdk.Construct {
       methodResponses: [{ statusCode: '200' }],
     });
 
+    // DELETE route to remove a domain
+    const deleteDomain = domain.addMethod('DELETE', new apigateway.AwsIntegration({
+      service: 'dynamodb',
+      action: 'DeleteItem',
+      options: {
+        credentialsRole: apigRole,
+        passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_TEMPLATES,
+        requestTemplates: {
+          'application/json': `{
+            "TableName": "${props.domainTable.tableName}",
+            "Key": {
+              "domain": {
+                "S": "$input.params('domain')"
+              }
+            }
+          }`
+        },
+        integrationResponses: [{ statusCode: "200" }]
+      }
+    }), {
+      methodResponses: [{ statusCode: '200' }],
+    });
+
   }
 }
